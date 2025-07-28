@@ -222,6 +222,9 @@
         #adPopup.show {
             display: block;
         }
+        #adPopup.flipped {
+            transform: scaleX(-1);
+        }
         #adPopup img {
             width: 100%;
             height: 100%;
@@ -262,7 +265,7 @@
 
     <!-- Ad Popup -->
     <div id="adPopup">
-        <img src="https://raw.githubusercontent.com/llcaptainmorgan/ProfileBasedGunFitter/main/i_like_guns.gif" alt="I Like Guns">
+        <img src="https://raw.githubusercontent.com/llcaptainmorgan/ProfileBasedGunFitter/main/i_like_guns.gif" alt="I Like Guns" loop>
         <div class="text-shadow">DO YOU
 LIKE GUNS?</div>
         <div class="text-main">DO YOU
@@ -400,11 +403,15 @@ LIKE GUNS?</div>
             
             adPopup.style.left = `${randomX}%`;
             adPopup.style.top = `${randomY}%`;
+            // Randomly flip the popup on x-axis (50% chance)
+            if (Math.random() < 0.5) {
+                adPopup.classList.add('flipped');
+            } else {
+                adPopup.classList.remove('flipped');
+            }
             adPopup.classList.add('show');
-            // Attempt to play audio, handle error silently
             adAudio.play().catch(error => {
                 console.warn('Audio playback failed due to browser policy:', error.message);
-                // Allow popup to function even if audio fails
             });
             
             // Schedule next popup with random interval (17-40 seconds)
@@ -414,6 +421,7 @@ LIKE GUNS?</div>
 
         function hideAdPopup() {
             adPopup.classList.remove('show');
+            adPopup.classList.remove('flipped');
             adAudio.pause();
             adAudio.currentTime = 0;
         }
@@ -509,15 +517,19 @@ LIKE GUNS?</div>
                 await new Promise(resolve => { tempGunImg.onload = resolve; tempGunImg.src = resizedGunDataUrl; });
                 memeCtx.drawImage(tempGunImg, 0, imageSectionHeight, imageSectionWidth, imageSectionHeight);
 
+                // Add black backdrop for caption area
+                memeCtx.fillStyle = 'rgba(0, 0, 0, 0.7)';
+                memeCtx.fillRect(0, imageSectionHeight * 2, imageSectionWidth, captionHeight);
+
                 const memeText = "This is the gun that fits you best based on your profile picture";
-                memeCtx.font = 'bold 40px Impact, sans-serif';
+                memeCtx.font = 'bold 80px Impact, sans-serif'; // Doubled font size from 40px to 80px
                 memeCtx.textAlign = 'center';
                 memeCtx.fillStyle = '#e5e7d5';
                 memeCtx.strokeStyle = '#2e4a3d';
-                memeCtx.lineWidth = 6;
+                memeCtx.lineWidth = 8; // Increased stroke width to match larger text
 
                 const textX = memeCanvas.width / 2;
-                const textY = (imageSectionHeight * 2) + (captionHeight / 2) + 10;
+                const textY = (imageSectionHeight * 2) + (captionHeight / 2) + 20; // Adjusted for larger text
                 memeCtx.strokeText(memeText, textX, textY);
                 memeCtx.fillText(memeText, textX, textY);
 
