@@ -10,19 +10,19 @@
     <style>
         body {
             font-family: 'Inter', sans-serif;
-            background-color: #2e4a3d; /* Army green background */
+            background-color: #2e4a3d;
             display: flex;
             justify-content: center;
             align-items: center;
             min-height: 100vh;
             padding: 20px;
             box-sizing: border-box;
-            color: #e5e7d5; /* Light khaki text for contrast */
+            color: #e5e7d5;
+            overflow-x: hidden;
         }
-        /* Custom styles for loading spinner */
         .loader {
-            border: 4px solid #4a7043; /* Darker army green */
-            border-top: 4px solid #8b8d42; /* Army yellow/olive */
+            border: 4px solid #4a7043;
+            border-top: 4px solid #8b8d42;
             border-radius: 50%;
             width: 24px;
             height: 24px;
@@ -35,51 +35,95 @@
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
         }
-        /* Ensure images fit within their containers without distortion */
         .image-container img {
             max-width: 100%;
             max-height: 100%;
-            object-fit: contain; /* Ensures the entire image is visible, maintaining aspect ratio */
+            object-fit: contain;
+        }
+        #confettiOverlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: 1000;
+            pointer-events: none;
+            display: none;
+        }
+        #confettiOverlay.show {
+            display: block;
+        }
+        #adPopup {
+            position: fixed;
+            width: 300px;
+            height: 300px;
+            background-color: #3e5c4e;
+            border: 2px solid #8b8d42;
+            border-radius: 8px;
+            z-index: 1001;
+            display: none;
+            cursor: pointer;
+            overflow: hidden;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+        }
+        #adPopup.show {
+            display: block;
+        }
+        #adPopup img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
+        #adPopup div {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            color: #e5e7d5;
+            font-size: 24px;
+            font-weight: bold;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+            white-space: pre-line;
         }
     </style>
 </head>
 <body class="bg-[#2e4a3d] flex items-center justify-center min-h-screen p-4">
-    <div class="bg-[#3e5c4e] rounded-xl shadow-2xl p-6 md:p-8 w-full max-w-4xl flex flex-col md:flex-row gap-6">
+    <!-- Confetti Overlay -->
+    <img id="confettiOverlay" src="https://raw.githubusercontent.com/llcaptainmorgan/ProfileBasedGunFitter/main/confetti.gif" alt="Confetti">
 
+    <!-- Ad Popup -->
+    <div id="adPopup">
+        <img src="https://raw.githubusercontent.com/llcaptainmorgan/ProfileBasedGunFitter/main/i_like_guns.gif" alt="I Like Guns">
+        <div>DO YOU\nLIKE GUNS?</div>
+    </div>
+
+    <div class="bg-[#3e5c4e] rounded-xl shadow-2xl p-6 md:p-8 w-full max-w-4xl flex flex-col md:flex-row gap-6">
         <!-- Controls Section -->
         <div class="md:w-1/3 flex flex-col items-center justify-start py-4 space-y-4">
             <h1 class="text-3xl font-bold text-[#e5e7d5] mb-6 text-center">ProfileBasedGunFitter</h1>
-
-            <!-- Profile Picture Upload -->
             <div class="w-full">
                 <label for="profileUpload" class="block text-sm font-medium text-[#e5e7d5] mb-2">Upload Profile Picture</label>
                 <input type="file" id="profileUpload" accept="image/*" class="block w-full text-sm text-[#e5e7d5] border border-[#4a7043] rounded-lg cursor-pointer bg-[#2e4a3d] focus:outline-none file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-[#8b8d42] file:text-[#e5e7d5] hover:file:bg-[#6b6d32]">
                 <p id="fileName" class="mt-2 text-sm text-[#a3a68b] text-center"></p>
             </div>
-
-            <!-- Generate Button -->
             <button id="generateBtn" class="w-full bg-gradient-to-r from-[#8b8d42] to-[#4a7043] text-[#e5e7d5] font-semibold py-3 px-6 rounded-full shadow-lg hover:from-[#6b6d32] hover:to-[#3a5633] transition-all duration-300 transform hover:scale-105 focus:outline-none focus:ring-4 focus:ring-[#8b8d42] disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center" disabled>
                 <span id="generateBtnText">Generate Gun Pic</span>
                 <div id="loadingSpinner" class="loader hidden"></div>
             </button>
-
-            <!-- Save Button -->
             <button id="saveBtn" class="w-full bg-gradient-to-r from-[#4a7043] to-[#8b8d42] text-[#e5e7d5] font-semibold py-3 px-6 rounded-full shadow-lg hover:from-[#3a5633] hover:to-[#6b6d32] transition-all duration-300 transform hover:scale-105 focus:outline-none focus:ring-4 focus:ring-[#4a7043] disabled:opacity-50 disabled:cursor-not-allowed" disabled>
                 Save Meme
             </button>
-
-            <!-- Status Message -->
             <p id="statusMessage" class="mt-4 text-sm text-[#a3a68b] text-center"></p>
         </div>
-
         <!-- Image Display Section -->
         <div class="md:w-2/3 flex flex-col items-center justify-center space-y-6">
-            <!-- Uploaded Profile Picture Container -->
             <div class="w-full bg-[#3e5c4e] border border-[#4a7043] rounded-lg overflow-hidden shadow-inner flex items-center justify-center min-h-[200px] md:min-h-[250px] aspect-video image-container">
                 <img id="uploadedImage" src="https://placehold.co/600x400/3e5c4e/e5e7d5?text=Your+Profile+Pic" alt="Uploaded Profile Picture" class="w-full h-auto object-contain rounded-lg">
             </div>
-
-            <!-- Generated Gun Image Container -->
             <div class="w-full bg-[#3e5c4e] border border-[#4a7043] rounded-lg overflow-hidden shadow-inner flex items-center justify-center min-h-[200px] md:min-h-[250px] aspect-video image-container">
                 <img id="generatedGunImage" src="https://placehold.co/600x400/3e5c4e/e5e7d5?text=Generated+Gun+Pic" alt="Generated Gun Picture" class="w-full h-auto object-contain rounded-lg">
             </div>
@@ -97,6 +141,9 @@
         const statusMessage = document.getElementById('statusMessage');
         const loadingSpinner = document.getElementById('loadingSpinner');
         const generateBtnText = document.getElementById('generateBtnText');
+        const confettiOverlay = document.getElementById('confettiOverlay');
+        const adPopup = document.getElementById('adPopup');
+        const adAudio = new Audio('https://raw.githubusercontent.com/llcaptainmorgan/ProfileBasedGunFitter/main/I%20Like%20Guns.mp3');
 
         // List of random prompts for gun image generation
         const basePrompts = [
@@ -176,6 +223,32 @@
             return canvas.toDataURL('image/png');
         }
 
+        // Popup ad functionality
+        function showAdPopup() {
+            const maxX = window.innerWidth - 300; // Popup width
+            const maxY = window.innerHeight - 300; // Popup height
+            const randomX = Math.floor(Math.random() * maxX);
+            const randomY = Math.floor(Math.random() * maxY);
+            
+            adPopup.style.left = `${randomX}px`;
+            adPopup.style.top = `${randomY}px`;
+            adPopup.classList.add('show');
+            adAudio.play().catch(error => console.error('Audio play failed:', error));
+        }
+
+        function hideAdPopup() {
+            adPopup.classList.remove('show');
+            adAudio.pause();
+            adAudio.currentTime = 0;
+        }
+
+        adPopup.addEventListener('click', hideAdPopup);
+
+        // Start popup interval
+        setInterval(showAdPopup, 20000);
+        // Show first popup after 20 seconds
+        setTimeout(showAdPopup, 20000);
+
         // Event listener for generate button
         generateBtn.addEventListener('click', async () => {
             if (!profileUpload.files[0]) {
@@ -190,7 +263,6 @@
             statusMessage.textContent = 'Generating your unique gun pic, please wait...';
             generatedGunImage.src = "https://placehold.co/600x400/3e5c4e/e5e7d5?text=Generating...";
 
-            // --- Dynamic Prompt Generation ---
             let selectedPromptParts = [];
             selectedPromptParts.push(basePrompts[Math.floor(Math.random() * basePrompts.length)]);
             selectedPromptParts.push(styles[Math.floor(Math.random() * styles.length)]);
@@ -279,6 +351,12 @@
                 saveBtn.disabled = false;
                 statusMessage.textContent = 'Meme generated successfully! Click "Save Meme" to download.';
 
+                // Show confetti for 5 seconds
+                confettiOverlay.classList.add('show');
+                setTimeout(() => {
+                    confettiOverlay.classList.remove('show');
+                }, 5000);
+
             } catch (error) {
                 console.error('Error generating meme:', error);
                 statusMessage.textContent = `Error generating meme: ${error.message}. Please try again.`;
@@ -291,7 +369,7 @@
         });
 
         // Event listener for save button
-        saveBtn.addEventListener('click', () => {
+        saveBtn.addEventListener('Click', () => {
             const imageUrl = generatedGunImage.src;
             if (imageUrl && imageUrl.startsWith('data:image/png;base64,')) {
                 const link = document.createElement('a');
