@@ -203,7 +203,7 @@
                     instances: { prompt: finalPrompt },
                     parameters: { "sampleCount": 1 }
                 };
-                const apiKey = "";
+                const apiKey = "AIzaSyBBdSL8uesGqhgu6F2wS7nzkY8x2GMUVq8";
                 const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/imagen-3.0-generate-002:predict?key=${apiKey}`;
 
                 const response = await fetch(apiUrl, {
@@ -300,9 +300,9 @@
                 document.body.appendChild(link);
                 link.click();
                 document.body.removeChild(link);
-                statusMessage.textContent = 'Meme downloaded!';
+                statusMessage.textContent = 'Picture downloaded!';
             } else {
-                statusMessage.textContent = 'No meme to save yet!';
+                statusMessage.textContent = 'No Picture to save yet!';
             }
         });
 
