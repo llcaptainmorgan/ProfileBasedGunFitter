@@ -4,8 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ProfileBasedGunFitter</title>
-    <!-- Tailwind CSS CDN -->
-    <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
         body {
@@ -19,6 +17,163 @@
             box-sizing: border-box;
             color: #e5e7d5;
             overflow-x: hidden;
+            margin: 0;
+        }
+        .container {
+            background-color: #3e5c4e;
+            border-radius: 0.75rem;
+            box-shadow: 0 10px 15px rgba(0, 0, 0, 0.2);
+            padding: 1.5rem;
+            width: 100%;
+            max-width: 64rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+        @media (min-width: 768px) {
+            .container {
+                flex-direction: row;
+                padding: 2rem;
+            }
+        }
+        .controls {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding-top: 1rem;
+            gap: 1rem;
+        }
+        @media (min-width: 768px) {
+            .controls {
+                width: 33.333333%;
+            }
+        }
+        .title {
+            font-size: 1.875rem;
+            font-weight: 700;
+            color: #e5e7d5;
+            margin-bottom: 1.5rem;
+            text-align: center;
+        }
+        .upload-section {
+            width: 100%;
+        }
+        .upload-label {
+            display: block;
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: #e5e7d5;
+            margin-bottom: 0.5rem;
+        }
+        .upload-input {
+            display: block;
+            width: 100%;
+            font-size: 0.875rem;
+            color: #e5e7d5;
+            border: 1px solid #4a7043;
+            border-radius: 0.375rem;
+            background-color: #2e4a3d;
+            cursor: pointer;
+        }
+        .upload-input::-webkit-file-upload-button {
+            margin-right: 1rem;
+            padding: 0.5rem 1rem;
+            border-radius: 9999px;
+            border: none;
+            font-size: 0.875rem;
+            font-weight: 600;
+            background-color: #8b8d42;
+            color: #e5e7d5;
+            cursor: pointer;
+        }
+        .upload-input::-webkit-file-upload-button:hover {
+            background-color: #6b6d32;
+        }
+        .file-name {
+            margin-top: 0.5rem;
+            font-size: 0.875rem;
+            color: #a3a68b;
+            text-align: center;
+        }
+        .button {
+            width: 100%;
+            background: linear-gradient(to right, #8b8d42, #4a7043);
+            color: #e5e7d5;
+            font-weight: 600;
+            padding: 0.75rem 1.5rem;
+            border-radius: 9999px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s;
+            transform: scale(1);
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .button:hover {
+            background: linear-gradient(to right, #6b6d32, #3a5633);
+            transform: scale(1.05);
+        }
+        .button:focus {
+            outline: none;
+            box-shadow: 0 0 0 4px rgba(139, 141, 66, 0.5);
+        }
+        .button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        .save-button {
+            background: linear-gradient(to right, #4a7043, #8b8d42);
+        }
+        .save-button:hover {
+            background: linear-gradient(to right, #3a5633, #6b6d32);
+        }
+        .save-button:focus {
+            box-shadow: 0 0 0 4px rgba(74, 112, 67, 0.5);
+        }
+        .status-message {
+            margin-top: 1rem;
+            font-size: 0.875rem;
+            color: #a3a68b;
+            text-align: center;
+        }
+        .image-section {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1.5rem;
+        }
+        @media (min-width: 768px) {
+            .image-section {
+                width: 66.666667%;
+            }
+        }
+        .image-container {
+            width: 100%;
+            background-color: #3e5c4e;
+            border: 1px solid #4a7043;
+            border-radius: 0.5rem;
+            overflow: hidden;
+            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 200px;
+            aspect-ratio: 3 / 2;
+        }
+        @media (min-width: 768px) {
+            .image-container {
+                min-height: 250px;
+            }
+        }
+        .image-container img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+            border-radius: 0.5rem;
         }
         .loader {
             border: 4px solid #4a7043;
@@ -31,14 +186,12 @@
             vertical-align: middle;
             margin-right: 8px;
         }
+        .hidden {
+            display: none;
+        }
         @keyframes spin {
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
-        }
-        .image-container img {
-            max-width: 100%;
-            max-height: 100%;
-            object-fit: contain;
         }
         #confettiOverlay {
             position: fixed;
@@ -77,55 +230,70 @@
             top: 0;
             left: 0;
         }
-        #adPopup div {
+        #adPopup .text-shadow {
             position: absolute;
-            top: 50%;
+            bottom: 20px;
             left: 50%;
-            transform: translate(-50%, -50%);
+            transform: translateX(-50%) translate(-2px, -2px);
+            text-align: center;
+            color: #000000;
+            font-size: 24px;
+            font-weight: 700;
+            white-space: pre-line;
+            z-index: 1;
+        }
+        #adPopup .text-main {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
             text-align: center;
             color: #e5e7d5;
             font-size: 24px;
-            font-weight: bold;
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+            font-weight: 700;
             white-space: pre-line;
+            z-index: 2;
         }
     </style>
 </head>
-<body class="bg-[#2e4a3d] flex items-center justify-center min-h-screen p-4">
+<body>
     <!-- Confetti Overlay -->
     <img id="confettiOverlay" src="https://raw.githubusercontent.com/llcaptainmorgan/ProfileBasedGunFitter/main/confetti.gif" alt="Confetti">
 
     <!-- Ad Popup -->
     <div id="adPopup">
         <img src="https://raw.githubusercontent.com/llcaptainmorgan/ProfileBasedGunFitter/main/i_like_guns.gif" alt="I Like Guns">
-        <div>DO YOU\nLIKE GUNS?</div>
+        <div class="text-shadow">DO YOU
+LIKE GUNS?</div>
+        <div class="text-main">DO YOU
+LIKE GUNS?</div>
     </div>
 
-    <div class="bg-[#3e5c4e] rounded-xl shadow-2xl p-6 md:p-8 w-full max-w-4xl flex flex-col md:flex-row gap-6">
+    <div class="container">
         <!-- Controls Section -->
-        <div class="md:w-1/3 flex flex-col items-center justify-start py-4 space-y-4">
-            <h1 class="text-3xl font-bold text-[#e5e7d5] mb-6 text-center">ProfileBasedGunFitter</h1>
-            <div class="w-full">
-                <label for="profileUpload" class="block text-sm font-medium text-[#e5e7d5] mb-2">Upload Profile Picture</label>
-                <input type="file" id="profileUpload" accept="image/*" class="block w-full text-sm text-[#e5e7d5] border border-[#4a7043] rounded-lg cursor-pointer bg-[#2e4a3d] focus:outline-none file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-[#8b8d42] file:text-[#e5e7d5] hover:file:bg-[#6b6d32]">
-                <p id="fileName" class="mt-2 text-sm text-[#a3a68b] text-center"></p>
+        <div class="controls">
+            <h1 class="title">ProfileBasedGunFitter</h1>
+            <div class="upload-section">
+                <label for="profileUpload" class="upload-label">Upload Profile Picture</label>
+                <input type="file" id="profileUpload" accept="image/*" class="upload-input">
+                <p id="fileName" class="file-name"></p>
             </div>
-            <button id="generateBtn" class="w-full bg-gradient-to-r from-[#8b8d42] to-[#4a7043] text-[#e5e7d5] font-semibold py-3 px-6 rounded-full shadow-lg hover:from-[#6b6d32] hover:to-[#3a5633] transition-all duration-300 transform hover:scale-105 focus:outline-none focus:ring-4 focus:ring-[#8b8d42] disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center" disabled>
+            <button id="generateBtn" class="button" disabled>
                 <span id="generateBtnText">Generate Gun Pic</span>
                 <div id="loadingSpinner" class="loader hidden"></div>
             </button>
-            <button id="saveBtn" class="w-full bg-gradient-to-r from-[#4a7043] to-[#8b8d42] text-[#e5e7d5] font-semibold py-3 px-6 rounded-full shadow-lg hover:from-[#3a5633] hover:to-[#6b6d32] transition-all duration-300 transform hover:scale-105 focus:outline-none focus:ring-4 focus:ring-[#4a7043] disabled:opacity-50 disabled:cursor-not-allowed" disabled>
+            <button id="saveBtn" class="button save-button" disabled>
                 Save Meme
             </button>
-            <p id="statusMessage" class="mt-4 text-sm text-[#a3a68b] text-center"></p>
+            <p id="statusMessage" class="status-message"></p>
         </div>
         <!-- Image Display Section -->
-        <div class="md:w-2/3 flex flex-col items-center justify-center space-y-6">
-            <div class="w-full bg-[#3e5c4e] border border-[#4a7043] rounded-lg overflow-hidden shadow-inner flex items-center justify-center min-h-[200px] md:min-h-[250px] aspect-video image-container">
-                <img id="uploadedImage" src="https://placehold.co/600x400/3e5c4e/e5e7d5?text=Your+Profile+Pic" alt="Uploaded Profile Picture" class="w-full h-auto object-contain rounded-lg">
+        <div class="image-section">
+            <div class="image-container">
+                <img id="uploadedImage" src="https://placehold.co/600x400/3e5c4e/e5e7d5?text=Your+Profile+Pic" alt="Uploaded Profile Picture">
             </div>
-            <div class="w-full bg-[#3e5c4e] border border-[#4a7043] rounded-lg overflow-hidden shadow-inner flex items-center justify-center min-h-[200px] md:min-h-[250px] aspect-video image-container">
-                <img id="generatedGunImage" src="https://placehold.co/600x400/3e5c4e/e5e7d5?text=Generated+Gun+Pic" alt="Generated Gun Picture" class="w-full h-auto object-contain rounded-lg">
+            <div class="image-container">
+                <img id="generatedGunImage" src="https://placehold.co/600x400/3e5c4e/e5e7d5?text=Generated+Gun+Pic" alt="Generated Gun Picture">
             </div>
         </div>
     </div>
@@ -225,15 +393,23 @@
 
         // Popup ad functionality
         function showAdPopup() {
-            const maxX = window.innerWidth - 300; // Popup width
-            const maxY = window.innerHeight - 300; // Popup height
-            const randomX = Math.floor(Math.random() * maxX);
-            const randomY = Math.floor(Math.random() * maxY);
+            const maxX = 100 - (300 / window.innerWidth * 100);
+            const maxY = 100 - (300 / window.innerHeight * 100);
+            const randomX = Math.random() * maxX;
+            const randomY = Math.random() * maxY;
             
-            adPopup.style.left = `${randomX}px`;
-            adPopup.style.top = `${randomY}px`;
+            adPopup.style.left = `${randomX}%`;
+            adPopup.style.top = `${randomY}%`;
             adPopup.classList.add('show');
-            adAudio.play().catch(error => console.error('Audio play failed:', error));
+            // Attempt to play audio, handle error silently
+            adAudio.play().catch(error => {
+                console.warn('Audio playback failed due to browser policy:', error.message);
+                // Allow popup to function even if audio fails
+            });
+            
+            // Schedule next popup with random interval (17-40 seconds)
+            const nextInterval = Math.floor(Math.random() * (40000 - 17000 + 1)) + 17000;
+            setTimeout(showAdPopup, nextInterval);
         }
 
         function hideAdPopup() {
@@ -244,10 +420,8 @@
 
         adPopup.addEventListener('click', hideAdPopup);
 
-        // Start popup interval
-        setInterval(showAdPopup, 20000);
-        // Show first popup after 20 seconds
-        setTimeout(showAdPopup, 20000);
+        // Start first popup after 5 seconds
+        setTimeout(showAdPopup, 5000);
 
         // Event listener for generate button
         generateBtn.addEventListener('click', async () => {
@@ -369,7 +543,7 @@
         });
 
         // Event listener for save button
-        saveBtn.addEventListener('Click', () => {
+        saveBtn.addEventListener('click', () => {
             const imageUrl = generatedGunImage.src;
             if (imageUrl && imageUrl.startsWith('data:image/png;base64,')) {
                 const link = document.createElement('a');
