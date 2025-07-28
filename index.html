@@ -257,6 +257,12 @@
             white-space: pre-line;
             z-index: 2;
         }
+        #adPopup.flipped .text-shadow {
+            transform: translateX(-50%) translate(-2px, -2px) scaleX(-1);
+        }
+        #adPopup.flipped .text-main {
+            transform: translateX(-50%) scaleX(-1);
+        }
     </style>
 </head>
 <body>
@@ -419,7 +425,21 @@ LIKE GUNS?</div>
             adAudio.play().catch(error => {
                 console.warn('Audio playback failed due to browser policy:', error.message);
             });
-            
+
+            // Restart GIF every 3 seconds while popup is visible
+            const restartInterval = setInterval(() => {
+                if (adPopup.classList.contains('show')) {
+                    adGif.src = adGif.src.split('?')[0] + '?t=' + new Date().getTime();
+                    console.log('GIF restarted at', new Date().toISOString());
+                }
+            }, 3000);
+
+            // Clear interval when popup is hidden
+            adPopup.addEventListener('click', () => {
+                clearInterval(restartInterval);
+                hideAdPopup();
+            }, { once: true });
+
             // Schedule next popup with random interval (17-40 seconds)
             const nextInterval = Math.floor(Math.random() * (40000 - 17000 + 1)) + 17000;
             setTimeout(showAdPopup, nextInterval);
@@ -432,10 +452,8 @@ LIKE GUNS?</div>
             adAudio.currentTime = 0;
         }
 
-        adPopup.addEventListener('click', hideAdPopup);
-
-        // Start first popup after 5 seconds
-        setTimeout(showAdPopup, 5000);
+        // Start first popup after 17 seconds
+        setTimeout(showAdPopup, 17000);
 
         // Event listener for generate button
         generateBtn.addEventListener('click', async () => {
@@ -509,7 +527,7 @@ LIKE GUNS?</div>
                 const memeCtx = memeCanvas.getContext('2d');
                 const imageSectionHeight = 960;
                 const imageSectionWidth = 1080;
-                const captionHeight = 150; // Increased to accommodate two lines
+                const captionHeight = 150;
                 memeCanvas.width = imageSectionWidth;
                 memeCanvas.height = (imageSectionHeight * 2) + captionHeight;
 
@@ -537,8 +555,8 @@ LIKE GUNS?</div>
                 memeCtx.lineWidth = 8;
 
                 const textX = memeCanvas.width / 2;
-                const textY1 = (imageSectionHeight * 2) + (captionHeight / 3); // First line
-                const textY2 = (imageSectionHeight * 2) + (captionHeight * 2 / 3); // Second line
+                const textY1 = (imageSectionHeight * 2) + (captionHeight / 3);
+                const textY2 = (imageSectionHeight * 2) + (captionHeight * 2 / 3);
                 memeCtx.strokeText(memeTextLine1, textX, textY1);
                 memeCtx.fillText(memeTextLine1, textX, textY1);
                 memeCtx.strokeText(memeTextLine2, textX, textY2);
