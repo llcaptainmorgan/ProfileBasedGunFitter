@@ -265,7 +265,7 @@
 
     <!-- Ad Popup -->
     <div id="adPopup">
-        <img src="https://raw.githubusercontent.com/llcaptainmorgan/ProfileBasedGunFitter/main/i_like_guns.gif" alt="I Like Guns" loop>
+        <img id="adGif" src="https://raw.githubusercontent.com/llcaptainmorgan/ProfileBasedGunFitter/main/i_like_guns.gif" alt="I Like Guns" loop>
         <div class="text-shadow">DO YOU
 LIKE GUNS?</div>
         <div class="text-main">DO YOU
@@ -314,6 +314,7 @@ LIKE GUNS?</div>
         const generateBtnText = document.getElementById('generateBtnText');
         const confettiOverlay = document.getElementById('confettiOverlay');
         const adPopup = document.getElementById('adPopup');
+        const adGif = document.getElementById('adGif');
         const adAudio = new Audio('https://raw.githubusercontent.com/llcaptainmorgan/ProfileBasedGunFitter/main/I%20Like%20Guns.mp3');
 
         // List of random prompts for gun image generation
@@ -404,11 +405,16 @@ LIKE GUNS?</div>
             adPopup.style.left = `${randomX}%`;
             adPopup.style.top = `${randomY}%`;
             // Randomly flip the popup on x-axis (50% chance)
-            if (Math.random() < 0.5) {
+            const shouldFlip = Math.random() < 0.5;
+            if (shouldFlip) {
                 adPopup.classList.add('flipped');
+                console.log('Ad popup flipped on X-axis');
             } else {
                 adPopup.classList.remove('flipped');
+                console.log('Ad popup not flipped');
             }
+            // Force GIF reload to ensure playback
+            adGif.src = adGif.src.split('?')[0] + '?t=' + new Date().getTime();
             adPopup.classList.add('show');
             adAudio.play().catch(error => {
                 console.warn('Audio playback failed due to browser policy:', error.message);
@@ -503,7 +509,7 @@ LIKE GUNS?</div>
                 const memeCtx = memeCanvas.getContext('2d');
                 const imageSectionHeight = 960;
                 const imageSectionWidth = 1080;
-                const captionHeight = 100;
+                const captionHeight = 150; // Increased to accommodate two lines
                 memeCanvas.width = imageSectionWidth;
                 memeCanvas.height = (imageSectionHeight * 2) + captionHeight;
 
@@ -521,17 +527,22 @@ LIKE GUNS?</div>
                 memeCtx.fillStyle = 'rgba(0, 0, 0, 0.7)';
                 memeCtx.fillRect(0, imageSectionHeight * 2, imageSectionWidth, captionHeight);
 
-                const memeText = "This is the gun that fits you best based on your profile picture";
-                memeCtx.font = 'bold 80px Impact, sans-serif'; // Doubled font size from 40px to 80px
+                // Split caption into two lines
+                const memeTextLine1 = "This is the gun that fits you best";
+                const memeTextLine2 = "based on your profile picture";
+                memeCtx.font = 'bold 80px Impact, sans-serif';
                 memeCtx.textAlign = 'center';
                 memeCtx.fillStyle = '#e5e7d5';
                 memeCtx.strokeStyle = '#2e4a3d';
-                memeCtx.lineWidth = 8; // Increased stroke width to match larger text
+                memeCtx.lineWidth = 8;
 
                 const textX = memeCanvas.width / 2;
-                const textY = (imageSectionHeight * 2) + (captionHeight / 2) + 20; // Adjusted for larger text
-                memeCtx.strokeText(memeText, textX, textY);
-                memeCtx.fillText(memeText, textX, textY);
+                const textY1 = (imageSectionHeight * 2) + (captionHeight / 3); // First line
+                const textY2 = (imageSectionHeight * 2) + (captionHeight * 2 / 3); // Second line
+                memeCtx.strokeText(memeTextLine1, textX, textY1);
+                memeCtx.fillText(memeTextLine1, textX, textY1);
+                memeCtx.strokeText(memeTextLine2, textX, textY2);
+                memeCtx.fillText(memeTextLine2, textX, textY2);
 
                 generatedGunImage.src = memeCanvas.toDataURL('image/png');
                 saveBtn.disabled = false;
