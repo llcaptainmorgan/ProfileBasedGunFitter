@@ -391,7 +391,7 @@ LIKE GUNS?</div>
         ];
 
         const styles = [
-            "standard gun", "cinematic gun", "military gun", "toy gun", 
+            "standard gun", "cinematic gun", " military gun", "toy gun", 
             "water gun", "arcade", "lego brick"
         ];
 
@@ -449,11 +449,18 @@ LIKE GUNS?</div>
         function showAdPopup() {
             const maxX = 100 - (300 / window.innerWidth * 100);
             const maxY = 100 - (300 / window.innerHeight * 100);
-            const randomX = Math.random() * maxX;
-            const randomY = Math.random() * maxY;
             
-            adPopup.style.left = `${randomX}%`;
-            adPopup.style.top = `${randomY}%`;
+            // Function to reposition popup
+            function repositionPopup() {
+                const randomX = Math.random() * maxX;
+                const randomY = Math.random() * maxY;
+                adPopup.style.left = `${randomX}%`;
+                adPopup.style.top = `${randomY}%`;
+                console.log(`Popup repositioned to left: ${randomX}%, top: ${randomY}%`);
+            }
+
+            // Initial position
+            repositionPopup();
             // Randomly flip the popup on x-axis (50% chance)
             const shouldFlip = Math.random() < 0.5;
             if (shouldFlip) {
@@ -473,6 +480,13 @@ LIKE GUNS?</div>
             // Start rainbow effect when popup appears
             startRainbowEffect();
 
+            // Reposition popup every 0.5 seconds
+            const positionInterval = setInterval(() => {
+                if (adPopup.classList.contains('show')) {
+                    repositionPopup();
+                }
+            }, 500);
+
             // Restart GIF every 3 seconds while popup is visible
             const restartInterval = setInterval(() => {
                 if (adPopup.classList.contains('show')) {
@@ -481,9 +495,10 @@ LIKE GUNS?</div>
                 }
             }, 3000);
 
-            // Clear interval and revert colors when popup is clicked
+            // Clear intervals and revert colors when popup is clicked
             adPopup.addEventListener('click', () => {
                 clearInterval(restartInterval);
+                clearInterval(positionInterval);
                 resetColors();
                 hideAdPopup();
             }, { once: true });
@@ -625,7 +640,9 @@ LIKE GUNS?</div>
                 statusMessage.textContent = `Error generating meme: ${error.message}. Please try again.`;
                 generatedGunImage.src = "https://placehold.co/600x400/3e5c4e/e5e7d5?text=Error";
             } finally {
-                generateBtn.disabled = false;
+                generate
+
+Btn.disabled = false;
                 generateBtnText.textContent = 'Generate Gun Pic';
                 loadingSpinner.classList.add('hidden');
             }
