@@ -4,7 +4,651 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ProfileBasedGunFitter</title>
+    <link href="https://fonts.googleapis.com/css2?family<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ProfileBasedGunFitter</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #2e4a3d;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+            box-sizing: border-box;
+            color: #e5e7d5;
+            overflow-x: hidden;
+            margin: 0;
+            transition: background-color 0.3s ease;
+        }
+        .container {
+            background-color: #3e5c4e;
+            border-radius: 0.75rem;
+            box-shadow: 0 10px 15px rgba(0, 0, 0, 0.2);
+            padding: 1.5rem;
+            width: 100%;
+            max-width: 64rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+        @media (min-width: 768px) {
+            .container {
+                flex-direction: row;
+                padding: 2rem;
+            }
+        }
+        .controls {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding-top: 1rem;
+            gap: 1rem;
+        }
+        @media (min-width: 768px) {
+            .controls {
+                width: 33.333333%;
+            }
+        }
+        .title {
+            font-size: 1.875rem;
+            font-weight: 700;
+            color: #e5e7d5;
+            margin-bottom: 1.5rem;
+            text-align: center;
+        }
+        .upload-section {
+            width: 100%;
+        }
+        .upload-label {
+            display: block;
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: #e5e7d5;
+            margin-bottom: 0.5rem;
+        }
+        .upload-input {
+            display: block;
+            width: 100%;
+            font-size: 0.875rem;
+            color: #e5e7d5;
+            border: 1px solid #4a7043;
+            border-radius: 0.375rem;
+            background-color: #2e4a3d;
+            cursor: pointer;
+        }
+        .upload-input::-webkit-file-upload-button {
+            margin-right: 1rem;
+            padding: 0.5rem 1rem;
+            border-radius: 9999px;
+            border: none;
+            font-size: 0.875rem;
+            font-weight: 600;
+            background-color: #8b8d42;
+            color: #e5e7d5;
+            cursor: pointer;
+        }
+        .upload-input::-webkit-file-upload-button:hover {
+            background-color: #6b6d32;
+        }
+        .file-name {
+            margin-top: 0.5rem;
+            font-size: 0.875rem;
+            color: #a3a68b;
+            text-align: center;
+        }
+        .button {
+            width: 100%;
+            background: linear-gradient(to right, #8b8d42, #4a7043);
+            color: #e5e7d5;
+            font-weight: 600;
+            padding: 0.75rem 1.5rem;
+            border-radius: 9999px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s;
+            transform: scale(1);
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .button:hover {
+            background: linear-gradient(to right, #6b6d32, #3a5633);
+            transform: scale(1.05);
+        }
+        .button:focus {
+            outline: none;
+            box-shadow: 0 0 0 4px rgba(139, 141, 66, 0.5);
+        }
+        .button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        .save-button {
+            background: linear-gradient(to right, #4a7043, #8b8d42);
+        }
+        .save-button:hover {
+            background: linear-gradient(to right, #3a5633, #6b6d32);
+        }
+        .save-button:focus {
+            box-shadow: 0 0 0 4px rgba(74, 112, 67, 0.5);
+        }
+        .status-message {
+            margin-top: 1rem;
+            font-size: 0.875rem;
+            color: #a3a68b;
+            text-align: center;
+        }
+        .image-section {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1.5rem;
+        }
+        @media (min-width: 768px) {
+            .image-section {
+                width: 66.666667%;
+            }
+        }
+        .image-container {
+            width: 100%;
+            background-color: #3e5c4e;
+            border: 1px solid #4a7043;
+            border-radius: 0.5rem;
+            overflow: hidden;
+            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 200px;
+            aspect-ratio: 3 / 2;
+        }
+        @media (min-width: 768px) {
+            .image-container {
+                min-height: 250px;
+            }
+        }
+        .image-container img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+            border-radius: 0.5rem;
+        }
+        .loader {
+            border: 4px solid #4a7043;
+            border-top: 4px solid #8b8d42;
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            animation: spin 1s linear infinite;
+            display: inline-block;
+            vertical-align: middle;
+            margin-right: 8px;
+        }
+        .hidden {
+            display: none;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        #confettiOverlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: 1000;
+            pointer-events: none;
+            display: none;
+        }
+        #confettiOverlay.show {
+            display: block;
+        }
+        #adPopup {
+            position: fixed;
+            width: 300px;
+            height: 300px;
+            background-color: #3e5c4e;
+            border: 2px solid #8b8d42;
+            border-radius: 8px;
+            z-index: 1001;
+            display: none;
+            cursor: pointer;
+            overflow: hidden;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+        }
+        #adPopup.show {
+            display: block;
+        }
+        #adPopup.flipped {
+            transform: scaleX(-1);
+        }
+        #adPopup img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
+        #adPopup .text-shadow {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%) translate(-2px, -2px);
+            text-align: center;
+            color: #000000;
+            font-size: 24px;
+            font-weight: 700;
+            white-space: pre-line;
+            z-index: 1;
+        }
+        #adPopup .text-main {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            text-align: center;
+            color: #e5e7d5;
+            font-size: 24px;
+            font-weight: 700;
+            white-space: pre-line;
+            z-index: 2;
+        }
+        #adPopup.flipped .text-shadow {
+            transform: translateX(-50%) translate(-2px, -2px) scaleX(-1);
+        }
+        #adPopup.flipped .text-main {
+            transform: translateX(-50%) scaleX(-1);
+        }
+    </style>
+</head>
+<body>
+    <!-- Confetti Overlay -->
+    <img id="confettiOverlay" src="https://raw.githubusercontent.com/llcaptainmorgan/ProfileBasedGunFitter/main/confetti.gif" alt="Confetti">
+
+    <!-- Ad Popup -->
+    <div id="adPopup">
+        <img id="adGif" src="https://raw.githubusercontent.com/llcaptainmorgan/ProfileBasedGunFitter/main/i_like_guns.gif" alt="I Like Guns" loop>
+        <div class="text-shadow">DO YOU
+LIKE GUNS?</div>
+        <div class="text-main">DO YOU
+LIKE GUNS?</div>
+    </div>
+
+    <div class="container">
+        <!-- Controls Section -->
+        <div class="controls">
+            <h1 class="title">ProfileBasedGunFitter</h1>
+            <div class="upload-section">
+                <label for="profileUpload" class="upload-label">Upload Profile Picture</label>
+                <input type="file" id="profileUpload" accept="image/*" class="upload-input">
+                <p id="fileName" class="file-name"></p>
+            </div>
+            <button id="generateBtn" class="button" disabled>
+                <span id="generateBtnText">Generate Gun Pic</span>
+                <div id="loadingSpinner" class="loader hidden"></div>
+            </button>
+            <button id="saveBtn" class="button save-button" disabled>
+                Save Meme
+            </button>
+            <p id="statusMessage" class="status-message"></p>
+        </div>
+        <!-- Image Display Section -->
+        <div class="image-section">
+            <div class="image-container">
+                <img id="uploadedImage" src="https://placehold.co/600x400/3e5c4e/e5e7d5?text=Your+Profile+Pic" alt="Uploaded Profile Picture">
+            </div>
+            <div class="image-container">
+                <img id="generatedGunImage" src="https://placehold.co/600x400/3e5c4e/e5e7d5?text=Generated+Gun+Pic" alt="Generated Gun Picture">
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Get references to DOM elements
+        const profileUpload = document.getElementById('profileUpload');
+        const fileNameLabel = document.getElementById('fileName');
+        const generateBtn = document.getElementById('generateBtn');
+        const saveBtn = document.getElementById('saveBtn');
+        const uploadedImage = document.getElementById('uploadedImage');
+        const generatedGunImage = document.getElementById('generatedGunImage');
+        const statusMessage = document.getElementById('statusMessage');
+        const loadingSpinner = document.getElementById('loadingSpinner');
+        const generateBtnText = document.getElementById('generateBtnText');
+        const confettiOverlay = document.getElementById('confettiOverlay');
+        const adPopup = document.getElementById('adPopup');
+        const adGif = document.getElementById('adGif');
+        const adAudio = new Audio('https://raw.githubusercontent.com/llcaptainmorgan/ProfileBasedGunFitter/main/I%20Like%20Guns.mp3');
+
+        // Rainbow color cycling for body and buttons
+        let colorInterval = setInterval(() => {
+            const r = Math.floor(Math.random() * 256);
+            const g = Math.floor(Math.random() * 256);
+            const b = Math.floor(Math.random() * 256);
+            const rgbColor = `rgb(${r}, ${g}, ${b})`;
+            // Darken for hover effect (reduce each component by 20%)
+            const rDark = Math.max(0, r * 0.8);
+            const gDark = Math.max(0, g * 0.8);
+            const bDark = Math.max(0, b * 0.8);
+            const rgbDarkColor = `rgb(${rDark}, ${gDark}, ${bDark})`;
+
+            document.body.style.backgroundColor = rgbColor;
+            generateBtn.style.background = rgbColor;
+            saveBtn.style.background = rgbColor;
+            generateBtn.style.setProperty('--hover-background', rgbDarkColor);
+            saveBtn.style.setProperty('--hover-background', rgbDarkColor);
+
+            console.log(`Background and buttons changed to ${rgbColor}, hover: ${rgbDarkColor}`);
+        }, 1500);
+
+        // Override hover styles using CSS custom property
+        const styleSheet = document.styleSheets[0];
+        styleSheet.insertRule(`
+            .button:hover, .save-button:hover {
+                background: var(--hover-background) !important;
+                transform: scale(1.05);
+            }
+        `, styleSheet.cssRules.length);
+
+        // List of random prompts for gun image generation
+        const basePrompts = [
+            "Bolt-Action Rifle, like Remington 700, manually operated, used for hunting and precision shooting",
+            "Semi-Automatic Pistol, like Glock 17, one round per trigger pull, for self-defense and law enforcement",
+            "Revolver, like Smith & Wesson Model 29, rotating cylinder, reliable for sport shooting",
+            "Pump-Action Shotgun, like Mossberg 500, manually cycled, versatile for hunting and home defense",
+            "Fully Automatic Machine Gun, like M249 SAW, continuous fire, used for military suppressive fire",
+            "Lever-Action Rifle, like Winchester Model 1894, lever mechanism, iconic for hunting",
+            "Submachine Gun, like MP5, compact pistol-caliber, for close-quarters combat",
+            "Designated Marksman Rifle, like M14 DMR, semi-automatic, for long-range military precision",
+            "Flintlock Musket, like Brown Bess, muzzle-loading, used in historical reenactments",
+            "Anti-Materiel Rifle, like Barrett M82, large-caliber, for destroying equipment or extreme ranges",
+            "water gun, colorful plastic, used for playful water fights",
+            "toy gun, plastic with sound effects, for kids' play",
+            "lego brick gun, built from colorful lego pieces, for imaginative play",
+            "finger guns, hand gesture mimicking a pistol, for playful expression",
+            "video game controller gun, plastic peripheral for shooting games",
+            "arcade gun, mounted light gun for arcade shooting games",
+            "bazooka, large rocket launcher, for military anti-tank use",
+            "flamethrower, projecting ignited fuel, for military or controlled burns",
+            "biceps flexed as guns, muscular arms, slang for strength"
+        ];
+
+        const styles = [
+            "standard gun", "cinematic gun", "military gun", "toy gun", 
+            "water gun", "arcade", "lego brick"
+        ];
+
+        // Event listener for profile picture upload
+        profileUpload.addEventListener('change', function(event) {
+            const file = event.target.files[0];
+            if (file) {
+                fileNameLabel.textContent = `Selected: ${file.name}`;
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    uploadedImage.src = e.target.result;
+                    generateBtn.disabled = false;
+                    statusMessage.textContent = 'Ready to generate gun pic!';
+                };
+                reader.readAsDataURL(file);
+            } else {
+                fileNameLabel.textContent = 'No image selected';
+                uploadedImage.src = "https://placehold.co/600x400/3e5c4e/e5e7d5?text=Your+Profile+Pic";
+                generateBtn.disabled = true;
+                saveBtn.disabled = true;
+                statusMessage.textContent = 'Please select a profile picture.';
+            }
+        });
+
+        // Function to resize and crop an image to fit a target size
+        function resizeAndCrop(img, targetWidth, targetHeight) {
+            const canvas = document.createElement('canvas');
+            const ctx = canvas.getContext('2d');
+            canvas.width = targetWidth;
+            canvas.height = targetHeight;
+
+            const imgAspectRatio = img.width / img.height;
+            const targetAspectRatio = targetWidth / targetHeight;
+
+            let sx, sy, sWidth, sHeight;
+            let dx = 0, dy = 0, dWidth = targetWidth, dHeight = targetHeight;
+
+            if (imgAspectRatio > targetAspectRatio) {
+                sHeight = img.height;
+                sWidth = sHeight * targetAspectRatio;
+                sx = (img.width - sWidth) / 2;
+                sy = 0;
+            } else {
+                sWidth = img.width;
+                sHeight = sWidth / targetAspectRatio;
+                sy = (img.height - sHeight) / 2;
+                sx = 0;
+            }
+
+            ctx.drawImage(img, sx, sy, sWidth, sHeight, dx, dy, dWidth, dHeight);
+            return canvas.toDataURL('image/png');
+        }
+
+        // Popup ad functionality
+        function showAdPopup() {
+            const maxX = 100 - (300 / window.innerWidth * 100);
+            const maxY = 100 - (300 / window.innerHeight * 100);
+            const randomX = Math.random() * maxX;
+            const randomY = Math.random() * maxY;
+            
+            adPopup.style.left = `${randomX}%`;
+            adPopup.style.top = `${randomY}%`;
+            // Randomly flip the popup on x-axis (50% chance)
+            const shouldFlip = Math.random() < 0.5;
+            if (shouldFlip) {
+                adPopup.classList.add('flipped');
+                console.log('Ad popup flipped on X-axis');
+            } else {
+                adPopup.classList.remove('flipped');
+                console.log('Ad popup not flipped');
+            }
+            // Force GIF reload to ensure playback
+            adGif.src = adGif.src.split('?')[0] + '?t=' + new Date().getTime();
+            adPopup.classList.add('show');
+            adAudio.play().catch(error => {
+                console.warn('Audio playback failed due to browser policy:', error.message);
+            });
+
+            // Restart GIF every 3 seconds while popup is visible
+            const restartInterval = setInterval(() => {
+                if (adPopup.classList.contains('show')) {
+                    adGif.src = adGif.src.split('?')[0] + '?t=' + new Date().getTime();
+                    console.log('GIF restarted at', new Date().toISOString());
+                }
+            }, 3000);
+
+            // Clear intervals and revert colors when popup is clicked
+            adPopup.addEventListener('click', () => {
+                clearInterval(restartInterval);
+                clearInterval(colorInterval); // Stop rainbow effect
+                document.body.style.backgroundColor = '#2e4a3d'; // Revert body background
+                generateBtn.style.background = 'linear-gradient(to right, #8b8d42, #4a7043)'; // Revert generate button
+                saveBtn.style.background = 'linear-gradient(to right, #4a7043, #8b8d42)'; // Revert save button
+                generateBtn.style.setProperty('--hover-background', 'linear-gradient(to right, #6b6d32, #3a5633)');
+                saveBtn.style.setProperty('--hover-background', 'linear-gradient(to right, #3a5633, #6b6d32)');
+                console.log('Rainbow effect stopped, background and buttons reverted to original colors');
+                hideAdPopup();
+            }, { once: true });
+
+            // Schedule next popup with random interval (17-40 seconds)
+            const nextInterval = Math.floor(Math.random() * (40000 - 17000 + 1)) + 17000;
+            setTimeout(showAdPopup, nextInterval);
+        }
+
+        function hideAdPopup() {
+            adPopup.classList.remove('show');
+            adPopup.classList.remove('flipped');
+            adAudio.pause();
+            adAudio.currentTime = 0;
+        }
+
+        // Start first popup after 17 seconds
+        setTimeout(showAdPopup, 17000);
+
+        // Event listener for generate button
+        generateBtn.addEventListener('click', async () => {
+            if (!profileUpload.files[0]) {
+                statusMessage.textContent = 'Please upload a profile picture first.';
+                return;
+            }
+
+            generateBtn.disabled = true;
+            saveBtn.disabled = true;
+            generateBtnText.textContent = 'Generating...';
+            loadingSpinner.classList.remove('hidden');
+            statusMessage.textContent = 'Generating your unique gun pic, please wait...';
+            generatedGunImage.src = "https://placehold.co/600x400/3e5c4e/e5e7d5?text=Generating...";
+
+            let selectedPromptParts = [];
+            selectedPromptParts.push(basePrompts[Math.floor(Math.random() * basePrompts.length)]);
+            selectedPromptParts.push(styles[Math.floor(Math.random() * styles.length)]);
+
+            const finalPrompt = selectedPromptParts.join(", ");
+            console.log("Generated Prompt:", finalPrompt);
+
+            try {
+                const payload = {
+                    instances: { prompt: finalPrompt },
+                    parameters: { "sampleCount": 1 }
+                };
+                const apiKey = "AIzaSyBBdSL8uesGqhgu6F2wS7nzkY8x2GMUVq8";
+                const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/imagen-3.0-generate-002:predict?key=${apiKey}`;
+
+                const response = await fetch(apiUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(`API error: ${response.status} - ${errorData.error.message || 'Unknown error'}`);
+                }
+
+                const result = await response.json();
+                let gunImageUrl;
+
+                if (result.predictions && result.predictions.length > 0 && result.predictions[0].bytesBase64Encoded) {
+                    gunImageUrl = `data:image/png;base64,${result.predictions[0].bytesBase64Encoded}`;
+                } else {
+                    throw new Error('No image data received from API.');
+                }
+
+                const profileImg = new Image();
+                const gunImg = new Image();
+
+                const loadProfilePromise = new Promise((resolve, reject) => {
+                    profileImg.onload = () => resolve();
+                    profileImg.onerror = reject;
+                    profileImg.src = uploadedImage.src;
+                });
+
+                const loadGunPromise = new Promise((resolve, reject) => {
+                    gunImg.onload = () => resolve();
+                    gunImg.onerror = reject;
+                    gunImg.src = gunImageUrl;
+                });
+
+                await Promise.all([loadProfilePromise, loadGunPromise]);
+
+                statusMessage.textContent = 'Combining images and adding caption...';
+
+                const memeCanvas = document.createElement('canvas');
+                const memeCtx = memeCanvas.getContext('2d');
+                const imageSectionHeight = 960;
+                const imageSectionWidth = 1080;
+                const captionHeight = 150;
+                memeCanvas.width = imageSectionWidth;
+                memeCanvas.height = (imageSectionHeight * 2) + captionHeight;
+
+                const resizedProfileDataUrl = resizeAndCrop(profileImg, imageSectionWidth, imageSectionHeight);
+                const tempProfileImg = new Image();
+                await new Promise(resolve => { tempProfileImg.onload = resolve; tempProfileImg.src = resizedProfileDataUrl; });
+                memeCtx.drawImage(tempProfileImg, 0, 0, imageSectionWidth, imageSectionHeight);
+
+                const resizedGunDataUrl = resizeAndCrop(gunImg, imageSectionWidth, imageSectionHeight);
+                const tempGunImg = new Image();
+                await new Promise(resolve => { tempGunImg.onload = resolve; tempGunImg.src = resizedGunDataUrl; });
+                memeCtx.drawImage(tempGunImg, 0, imageSectionHeight, imageSectionWidth, imageSectionHeight);
+
+                // Add black backdrop for caption area
+                memeCtx.fillStyle = 'rgba(0, 0, 0, 0.7)';
+                memeCtx.fillRect(0, imageSectionHeight * 2, imageSectionWidth, captionHeight);
+
+                // Split caption into two lines
+                const memeTextLine1 = "This is the gun that fits you best";
+                const memeTextLine2 = "based on your profile picture";
+                memeCtx.font = 'bold 80px Impact, sans-serif';
+                memeCtx.textAlign = 'center';
+                memeCtx.fillStyle = '#e5e7d5';
+                memeCtx.strokeStyle = '#2e4a3d';
+                memeCtx.lineWidth = 8;
+
+                const textX = memeCanvas.width / 2;
+                const textY1 = (imageSectionHeight * 2) + (captionHeight / 3);
+                const textY2 = (imageSectionHeight * 2) + (captionHeight * 2 / 3);
+                memeCtx.strokeText(memeTextLine1, textX, textY1);
+                memeCtx.fillText(memeTextLine1, textX, textY1);
+                memeCtx.strokeText(memeTextLine2, textX, textY2);
+                memeCtx.fillText(memeTextLine2, textX, textY2);
+
+                generatedGunImage.src = memeCanvas.toDataURL('image/png');
+                saveBtn.disabled = false;
+                statusMessage.textContent = 'Meme generated successfully! Click "Save Meme" to download.';
+
+                // Show confetti for 5 seconds
+                confettiOverlay.classList.add('show');
+                setTimeout(() => {
+                    confettiOverlay.classList.remove('show');
+                }, 5000);
+
+            } catch (error) {
+                console.error('Error generating meme:', error);
+                statusMessage.textContent = `Error generating meme: ${error.message}. Please try again.`;
+                generatedGunImage.src = "https://placehold.co/600x400/3e5c4e/e5e7d5?text=Error";
+            } finally {
+                generateBtn.disabled = false;
+                generateBtnText.textContent = 'Generate Gun Pic';
+                loadingSpinner.classList.add('hidden');
+            }
+        });
+
+        // Event listener for save button
+        saveBtn.addEventListener('click', () => {
+            const imageUrl = generatedGunImage.src;
+            if (imageUrl && imageUrl.startsWith('data:image/png;base64,')) {
+                const link = document.createElement('a');
+                link.href = imageUrl;
+                link.download = `gun_meme_${Date.now()}.png`;
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                statusMessage.textContent = 'Picture downloaded!';
+            } else {
+                statusMessage.textContent = 'No Picture to save yet!';
+            }
+        });
+
+        // Initial state setup
+        fileNameLabel.textContent = 'No image selected';
+        statusMessage.textContent = 'Upload a profile picture to get started!';
+    </script>
+</body>
+</html>=Inter:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
         body {
             font-family: 'Inter', sans-serif;
